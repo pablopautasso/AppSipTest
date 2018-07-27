@@ -80,7 +80,8 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         updateStatus("Inicializado");
         checkPermisoSip();
-
+        checkPermisoCall();
+        checkPermisoAudio();
 
 
     }
