@@ -3,6 +3,11 @@ package com.pablopautasso.appsiptest;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.net.sip.SipAudioCall;
 import android.net.sip.SipProfile;
 import android.os.IBinder;
@@ -23,18 +28,34 @@ public class IncomingCallReceiver extends BroadcastReceiver{
     public void onReceive(Context context, Intent intent) {
         SipAudioCall incomingCall = null;
         Toast.makeText(context, "HAY UNA LLAMADA ",Toast.LENGTH_LONG).show();
-
+        final  Ringtone ringtone;
+        Uri uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
+        ringtone = RingtoneManager.getRingtone(context, uri);
         try {
 
             SipAudioCall.Listener listener = new SipAudioCall.Listener() {
+
                 @Override
                 public void onRinging(SipAudioCall call, SipProfile caller) {
-                    Log.d(TAG, "onRinging: esta llamando...");
+                    Log.d(TAG, "onRinging: e.");
                     try {
                         call.answerCall(30);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
+                }
+
+                @Override
+                public void onRingingBack (SipAudioCall call){
+                    Log.d(TAG, "onRingingBack: ..");
+                    ringtone.play();
+                }
+
+                @Override
+                public void onCallEstablished(SipAudioCall call) {
+                    Log.d(TAG, "onCallEstablished: ..");
+                    ringtone.stop();
+                    call.startAudio();
                 }
             };
 
