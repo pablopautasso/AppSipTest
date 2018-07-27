@@ -7,6 +7,7 @@ import android.net.sip.SipAudioCall;
 import android.net.sip.SipProfile;
 import android.os.IBinder;
 import android.util.Log;
+import android.widget.Toast;
 
 public class IncomingCallReceiver extends BroadcastReceiver{
 
@@ -21,6 +22,8 @@ public class IncomingCallReceiver extends BroadcastReceiver{
     @Override
     public void onReceive(Context context, Intent intent) {
         SipAudioCall incomingCall = null;
+        Toast.makeText(context, "HAY UNA LLAMADA ",Toast.LENGTH_LONG).show();
+
         try {
 
             SipAudioCall.Listener listener = new SipAudioCall.Listener() {

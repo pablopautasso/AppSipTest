@@ -33,7 +33,12 @@
             </intent-filter>
         </activity>
         <activity android:name=".SipSettings" android:label="set_preferences"/>
-        <receiver android:name=".IncomingCallReceiver" android:label="Call Receiver"/>
+        <receiver android:name=".IncomingCallReceiver" android:label="Call Receiver">
+            <intent-filter>
+                <action android:name="android.intent.action.PHONE_STATE" />
+            </intent-filter>
+        </receiver>
+
     </application>
 
 </manifest>
