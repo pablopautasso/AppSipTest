@@ -45,8 +45,16 @@ public class IncomingCallReceiver extends BroadcastReceiver{
                     }
                 }
 
+//                @Override
+////                public void  (SipAudioCall call){
+////                    Log.d(TAG, "onRingingBack: ..");
+////                    ringtone.play();
+////                }
+
+
                 @Override
-                public void onRingingBack (SipAudioCall call){
+                public void onCalling(SipAudioCall call) {
+                    super.onCalling(call);
                     Log.d(TAG, "onRingingBack: ..");
                     ringtone.play();
                 }

@@ -35,7 +35,7 @@
         <activity android:name=".SipSettings" android:label="set_preferences"/>
         <receiver android:name=".IncomingCallReceiver" android:label="Call Receiver">
             <intent-filter>
-                <action android:name="android.intent.action.PHONE_STATE" />
+                <action android:name="android.intent.action.INCOMING_CALL" />
             </intent-filter>
         </receiver>
 
