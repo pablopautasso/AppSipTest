@@ -6,9 +6,12 @@ import android.content.Intent;
 import android.net.sip.SipAudioCall;
 import android.net.sip.SipProfile;
 import android.os.IBinder;
+import android.util.Log;
 
 public class IncomingCallReceiver extends BroadcastReceiver{
 
+
+    public final String TAG = "INCOMINGCALL";
     /**
      * Processes the incoming call, answers it, and hands it over to the
      * WalkieTalkieActivity.
@@ -23,6 +26,7 @@ public class IncomingCallReceiver extends BroadcastReceiver{
             SipAudioCall.Listener listener = new SipAudioCall.Listener() {
                 @Override
                 public void onRinging(SipAudioCall call, SipProfile caller) {
+                    Log.d(TAG, "onRinging: esta llamando...");
                     try {
                         call.answerCall(30);
                     } catch (Exception e) {

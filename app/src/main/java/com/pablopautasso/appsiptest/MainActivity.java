@@ -1,5 +1,6 @@
 package com.pablopautasso.appsiptest;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.PendingIntent;
@@ -7,6 +8,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.net.ParseException;
 import android.net.sip.SipAudioCall;
 import android.net.sip.SipException;
@@ -17,6 +19,8 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -27,6 +31,7 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -45,6 +50,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
     private static final int HANG_UP = 4;
 
     SwipeRefreshLayout swipeRefresh;
+    Button buttonInicializar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,8 +59,6 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.pushToTalk);
-        fab.setOnTouchListener(this);
 
         // Set up the intent filter.  This will be used to fire an
         // IncomingCallReceiver when someone calls the SIP address used by this
@@ -64,29 +68,88 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         callReceiver = new IncomingCallReceiver();
         this.registerReceiver(callReceiver, filter);
 
+        buttonInicializar = (Button) findViewById(R.id.buttonInicializar);
+        buttonInicializar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                initializeManager();
+            }
+        });
         // "Push to talk" can be a serious pain when the screen keeps turning off.
         // Let's prevent that.
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        updateStatus("Inicializado");
+        checkPermisoSip();
 
-        initializeManager();
 
-        swipeRefresh = (SwipeRefreshLayout) findViewById(R.id.refresh_layout);
-        swipeRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-//                initializeManager();
-                swipeRefresh.setRefreshing(false);
-            }
-        });
+
     }
 
 
     public void initializeManager() {
+
         if(manager == null) {
             manager = SipManager.newInstance(this);
         }
 
         initializeLocalProfile();
+
+    }
+
+    public void checkPermisoSip(){
+        // Here, thisActivity is the current activity
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.USE_SIP)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            // Should we show an explanation?
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.USE_SIP)) {
+
+                // Show an expanation to the user *asynchronously* -- don't block
+                // this thread waiting for the user's response! After the user
+                // sees the explanation, try again to request the permission.
+
+            } else {
+
+                // No explanation needed, we can request the permission.
+
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.USE_SIP},
+                        1);
+
+                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+                // app-defined int constant. The callback method gets the
+                // result of the request.
+            }
+        }
+    }
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case 1: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    // permission was granted, yay! Do the
+                    // contacts-related task you need to do.
+                    initializeManager();
+
+                } else {
+
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                }
+                return;
+            }
+
+            // other 'case' lines to check for other
+            // permissions this app might request
+        }
     }
 
     /**
